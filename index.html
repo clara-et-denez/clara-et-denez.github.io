@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anniversaire de Clara &amp; Denez</title>
+<style>
+  :root {
+    --xp-blue: linear-gradient(to bottom, #245edb 0%, #3f8cf3 9%, #245edb 18%, #245edb 92%, #333 100%);
+    --xp-border: #1b44b8;
+    --beige: #e7e5cf;
+    --shadow: 5px 8px 10px #0006;
+    --font: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", Tahoma, sans-serif;
+    --mono: "Lucida Console", "Lucida Sans Typewriter", Monaco, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: var(--font);
+    font-size: 13px;
+    color: #000;
+    padding-bottom: 60px;
+    overflow-x: hidden;
+    /* Fond façon "colline verte sous un ciel bleu" */
+    background:
+      radial-gradient(ellipse 140% 60% at 30% 100%, #4c9a2a 0 45%, transparent 46%),
+      radial-gradient(ellipse 120% 55% at 85% 105%, #3f8a22 0 45%, transparent 46%),
+      radial-gradient(ellipse 30% 8% at 20% 22%, #ffffffcc, transparent 70%),
+      radial-gradient(ellipse 25% 6% at 70% 15%, #ffffffaa, transparent 70%),
+      radial-gradient(ellipse 35% 7% at 55% 35%, #ffffff88, transparent 70%),
+      linear-gradient(to bottom, #2a6fd6 0%, #5a9cf0 45%, #a9cff7 70%, #cfe6fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+  a { color: #0645ad; }
+  a:hover { color: #d14; }
+
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; }
+
+  /* ---------- Fenêtre style XP ---------- */
+  .window {
+    background: #fff;
+    border: 2px solid var(--xp-border);
+    border-top: 0;
+    border-radius: 10px 10px 0 0;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .titlebar {
+    background: var(--xp-blue);
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+    padding: .55em .7em;
+    border-radius: 10px 10px 0 0;
+    font-weight: bold;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .titlebar .btns { display: flex; gap: 3px; flex: none; }
+  .titlebar .btns span {
+    width: 21px; height: 21px; display: grid; place-items: center;
+    border: 1px solid #fff; border-radius: 3px; font-size: 11px; text-shadow: none;
+    background: linear-gradient(180deg, #3c8cf8, #1c5be0 60%, #1a4fc9);
+  }
+  .titlebar .btns span.x { background: linear-gradient(180deg, #e9917e 0%, #df5941 29%, #9c200f 100%); }
+  .window .body { padding: 12px; }
+  .window.beige .body { background: var(--beige); }
+  .window.notepad .body { font-family: var(--mono); font-size: 12px; }
+
+  /* ---------- Bannière ---------- */
+  .banner {
+    border: ridge #fff 10px; border-radius: 10px;
+    margin-bottom: 18px; padding: 12px; text-align: center;
+    background: #fff;
+    box-shadow: var(--shadow);
+  }
+  .banner .gifs { display: flex; gap: 10px; justify-content: center; }
+  .banner .gifs img { flex: 1 1 0; min-width: 0; width: 100%; height: 180px; object-fit: cover; border: 1px solid #999; }
+  @media (max-width: 560px) { .banner .gifs img { height: 120px; } }
+  .banner h1 {
+    margin: 14px 0 10px; font-size: 26px; color: #1b44b8; text-shadow: 2px 2px 0 #b9c9f5;
+  }
+  .invite {
+    display: inline-block; text-align: left; font-size: 15px; line-height: 1.7;
+    background: var(--beige); padding: 10px 18px; border-radius: 6px;
+    box-shadow: 2px 2px 0 #fff inset, -2px -2px 0 #5d5c51 inset;
+  }
+  .invite b { color: #1b44b8; }
+  .banner .plea { margin: 12px 0 2px; font-size: 20px; font-weight: bold; color: #d1007a; animation: blink 1s steps(2) infinite; }
+
+  /* ---------- Colonnes ---------- */
+  .cols { display: flex; gap: 18px; align-items: flex-start; }
+  .col-left { flex: 0 0 300px; }
+  .col-right { flex: 1; min-width: 0; }
+  @media (max-width: 720px) {
+    .cols { flex-direction: column; }
+    .col-left { flex: none; width: 100%; }
+  }
+
+  .main-photo {
+    display: block; width: 100%; height: auto; margin-bottom: 10px;
+    border: 4px solid #fff; outline: 1px solid #999; box-shadow: 3px 3px 6px #0005;
+  }
+  .souvenir { display: block; width: 100%; height: auto; border: 4px solid #fff; outline: 1px solid #999; }
+  .souvenirs { display: flex; flex-direction: column; gap: 12px; }
+  video.souvenir { background: #000; }
+  .player {
+    flex: none; display: flex; align-items: center; gap: 6px; height: 100%; padding: 0 10px;
+    color: #fff; font-size: 12px; border-left: 1px solid #1042af; cursor: pointer; user-select: none;
+    background: linear-gradient(180deg, #0c59b9, #139ee9 8%, #18b5f2 40%, #139beb 88%, #1290e8);
+  }
+  .player .play {
+    width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-size: 11px;
+    border: 1px solid #fff; background: radial-gradient(circle at 35% 30%, #8fe08a, #2f8f2f);
+  }
+  .player .eq { display: inline-flex; gap: 2px; align-items: flex-end; height: 14px; }
+  .player .eq i { width: 3px; background: #fff; height: 30%; }
+  .player.on .eq i { animation: eq .5s ease-in-out infinite alternate; }
+  .player.on .eq i:nth-child(2) { animation-delay: .15s; }
+  .player.on .eq i:nth-child(3) { animation-delay: .3s; }
+  @keyframes eq { to { height: 100%; } }
+  @media (max-width: 500px) { .player .title { display: none; } }
+  .caption { text-align: center; font-size: 11px; color: #555; margin: 6px 0 0; font-style: italic; }
+  .interests { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: center; }
+  .interests img { image-rendering: pixelated; max-width: 100%; height: auto; }
+  .interests { gap: 12px; }
+  .interests img.big {
+    flex: 1 1 260px; max-width: 400px; height: 220px; object-fit: contain; background: #fff;
+    border: 4px solid #fff; outline: 1px solid #999; image-rendering: auto;
+  }
+  .interests .small-row { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; }
+  .interests .small-row img { height: 48px; width: auto; }
+  .photo-window .main-photo { margin-bottom: 0; }
+  .cop-float {
+    position: fixed; left: 0; z-index: 5; pointer-events: none;
+    image-rendering: pixelated; animation: drive linear infinite;
+  }
+  .cop-float.rev { animation-name: drive-rev; }
+  @keyframes drive { from { transform: translateX(-200px); } to { transform: translateX(110vw); } }
+  @keyframes drive-rev { from { transform: translateX(110vw) scaleX(-1); } to { transform: translateX(-200px) scaleX(-1); } }
+  .profile-top { display: flex; gap: 12px; }
+  .pic {
+    width: 140px; height: 140px; flex: none;
+    border: 6px solid #222; border-left-width: 12px;
+    background: linear-gradient(135deg, #ffb6d9, #c3a6ff 50%, #9fd3ff);
+    display: grid; place-items: center; font-size: 42px; white-space: nowrap;
+  }
+  .details p { margin: 0 0 8px; font-size: 12px; }
+  .party { color: #d1007a; font-weight: bold; animation: blink 1s steps(2) infinite; }
+
+  /* Infos (table beige) */
+  .infos { width: 100%; border-collapse: collapse; }
+  .infos td { display: block; padding: .3em; font-size: 12px; }
+  .infos td.label { font-weight: bold; color: #1b44b8; padding-top: .6em; border-top: 2px ridge var(--beige); }
+  .infos tr:first-child td.label { border-top: 0; padding-top: .3em; }
+
+  .countdown { text-align: center; }
+  .countdown .num { font-size: 20px; font-weight: bold; color: #1b44b8; display: block; margin-top: 6px; font-family: var(--mono); }
+
+  .program { margin: 0; padding: 0; list-style: none; }
+  .program li { margin-bottom: 8px; }
+
+  .blurbs h5 { color: #d14; font-size: 13px; margin: 4px 0 6px; }
+  .blurbs p { margin: 0 0 10px; line-height: 1.5; }
+
+  .blinkies { display: flex; flex-wrap: wrap; gap: 3px; margin: 6px 0 10px; }
+  .blinkie {
+    display: inline-block; width: 150px; max-width: 100%; height: 20px; line-height: 20px;
+    font-size: 10px; font-weight: bold; text-align: center; color: #fff;
+    border: 1px solid #000; animation: blink 1s steps(2) infinite;
+    font-family: Verdana, sans-serif;
+  }
+  @keyframes blink { 50% { filter: brightness(1.4) hue-rotate(30deg); } }
+  .b1 { background: #ff69b4; } .b2 { background: #9370db; } .b3 { background: #00bfff; }
+  .b4 { background: #32cd32; } .b5 { background: #ff8c00; } .b6 { background: #222; color: #ff0; }
+
+  /* Messages */
+  .comments-box { background: var(--beige); max-height: 300px; overflow-y: auto; margin-bottom: 8px; }
+  .comments { width: 100%; border-collapse: collapse; }
+  .comments td { vertical-align: top; padding: 6px; border-bottom: 2px ridge var(--beige); font-size: 12px; }
+  .comments td.who { width: 80px; text-align: center; font-weight: bold; }
+  .comments .avatar { width: 50px; height: 50px; margin: 4px auto 0; border: 1px solid #999; display: grid; place-items: center; font-size: 24px; background: #fff; }
+  .comments .date { font-weight: bold; margin-bottom: 4px; color: #1b44b8; }
+  .empty { padding: 10px; text-align: center; color: #555; font-style: italic; }
+  .count { font-weight: bold; margin: 0 0 8px; }
+
+  .wish-form input, .wish-form textarea {
+    width: 100%; font-family: var(--font); font-size: 12px; margin-bottom: 4px;
+    border: 1px solid #7f9db9; padding: 4px;
+  }
+  .wish-form textarea { height: 60px; }
+  .xp-btn {
+    font-family: var(--font); font-size: 12px; padding: 4px 14px; cursor: pointer;
+    border: 1px solid #003c74; border-radius: 3px;
+    background: linear-gradient(180deg, #fff, #ecebe6 86%, #d6d0c5);
+  }
+  .xp-btn:hover { box-shadow: inset 0 0 0 2px #f8b636; }
+
+  marquee { color: #fff; font-weight: bold; text-shadow: 2px 2px 0 #000; font-size: 14px; margin-bottom: 14px; display: block; }
+
+  /* ---------- Barre des tâches ---------- */
+  .taskbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    height: 40px; display: flex; align-items: center;
+    background: linear-gradient(180deg, #0997ff, #0053ee 8%, #0050ee 40%, #06f 88%, #06f 93%, #005bff 95%, #003dd7 96%, #003dd7);
+  }
+  .start {
+    height: 100%; display: flex; align-items: center; padding: 0 22px 0 12px; flex: none;
+    background: radial-gradient(circle, #5eac56 0%, #3c873c 100%);
+    border-radius: 0 40px 50px 0;
+    box-shadow: -2px -2px 10px rgba(0,0,0,.25) inset, 2px 2px 10px rgba(0,0,0,.5) inset;
+    color: #fff; font-size: 20px; font-weight: bold; font-style: italic; font-family: sans-serif;
+    text-shadow: 2px 2px 5px #0007; text-decoration: none;
+  }
+  .start:hover { color: #fff; filter: brightness(1.1); }
+  .tasks { display: flex; gap: 4px; padding: 0 6px; overflow-x: auto; flex: 1; scrollbar-width: none; }
+  .tasks a {
+    white-space: nowrap; color: #fff; text-decoration: none; font-size: 12px;
+    border: 1px solid #003c74; border-radius: 3px; padding: 5px 9px;
+    background: linear-gradient(180deg, #366ef3, #2d69f4 86%, #1a3eb4);
+  }
+  .tasks a { display: inline-flex; align-items: center; gap: 6px; min-width: 120px; }
+  .app-ico {
+    width: 18px; height: 18px; border-radius: 4px; display: grid; place-items: center; flex: none;
+    color: #fff; font-size: 11px; font-weight: bold; font-style: normal; border: 1px solid #fff8;
+  }
+  .tasks a:hover { background: linear-gradient(180deg, #1c35b4, #2450d7 86%, #1a3eb4); color: #fff; }
+  .clock {
+    flex: none; height: 100%; display: flex; align-items: center; padding: 0 14px;
+    color: #fff; font-size: 12px; border-left: 1px solid #1042af;
+    background: linear-gradient(180deg, #0c59b9, #139ee9 8%, #18b5f2 40%, #139beb 88%, #1290e8);
+  }
+  @media (max-width: 500px) { .clock { display: none; } }
+
+  /* ---------- Confettis ---------- */
+  .confetti { position: fixed; top: -20px; z-index: 0; pointer-events: none; font-size: 18px; animation: fall linear infinite; }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="banner">
+    <div class="gifs">
+      <img src="public/felicitations.gif" alt="Félicitations">
+      <img src="public/felicitation2.gif" alt="Félicitations">
+      <img src="public/dance.gif" alt="Danse">
+    </div>
+    <h1>On vous invite à notre double birthday partie 2 🎉</h1>
+    <div class="invite">
+      <b>Programme :</b><br>
+      📅 <b>Date :</b> 11 décembre<br>
+      📍 <b>Lieu :</b> à décider mais sûrement Maison Café<br>
+      🍻 <b>After :</b> Barberousse mdrr nan jsp
+    </div>
+    <p class="plea">venez svp sah 🙏</p>
+  </div>
+
+  <div class="window photo-window">
+    <div class="titlebar">📸 Clara &amp; Denez 🎂🎂 <div class="btns"><span>_</span><span>□</span><span class="x">✕</span></div></div>
+    <div class="body">
+      <img class="main-photo" src="public/nous_mdr.jpg" alt="Clara et Denez avec toute la bande">
+    </div>
+  </div>
+
+  <div class="window beige">
+    <div class="titlebar">⭐ Nos centres d'intérêt <div class="btns"><span>_</span><span>□</span><span class="x">✕</span></div></div>
+    <div class="body interests">
+      <img class="big" src="public/yotsuba.gif" alt="Yotsuba">
+      <div class="small-row">
+        <img src="public/saiki%20banner.gif" alt="Saiki Kusuo">
+        <img src="public/miku%20gi.gif" alt="Miku fan">
+        <img src="public/dvd_gif.gif" alt="Logo DVD">
+      </div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <!-- ================= COLONNE GAUCHE ================= -->
+    <div class="col-left">
+
+      <div class="window beige">
+        <div class="titlebar">⏳ Compte à rebours <div class="btns"><span class="x">✕</span></div></div>
+        <div class="body countdown">
+          <b>La fête commence dans :</b>
+          <span class="num" id="countdown">…</span>
+        </div>
+      </div>
+
+
+    </div>
+
+    <!-- ================= COLONNE DROITE ================= -->
+    <div class="col-right">
+
+
+
+      <div class="window blurbs">
+        <div class="titlebar">Petit mot de Clara &amp; Denez <div class="btns"><span class="x">✕</span></div></div>
+        <div class="body">
+          <p>Merci d'être là, on remets ça comme l'année dernière c'était trop cool ! Profitez puis voilà hein</p>
+          <div class="blinkies">
+            <span class="blinkie b4">♪ let's party ♪</span>
+            <span class="blinkie b6">&gt;&gt; 11 décembre &lt;&lt;</span>
+            <span class="blinkie b1">✿ love u all ✿</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="window">
+        <div class="titlebar">📸 yoannmdr.jpg <div class="btns"><span>_</span><span>□</span><span class="x">✕</span></div></div>
+        <div class="body">
+          <img class="souvenir" src="public/yoannmdr.jpg" alt="Photo avec Yoann">
+        </div>
+      </div>
+
+      <div class="window">
+        <div class="titlebar">📁 Souvenirs <div class="btns"><span>_</span><span>□</span><span class="x">✕</span></div></div>
+        <div class="body souvenirs">
+          <img class="souvenir" src="public/souvenir_1.jpg" alt="Souvenir 1">
+          <img class="souvenir" src="public/souvenir_2.jpg" alt="Souvenir 2">
+          <video class="souvenir" id="souvenir-video" src="public/souvenir3.mov" controls playsinline preload="metadata"></video>
+        </div>
+      </div>
+
+      <div class="window" id="messages">
+        <div class="titlebar">💬 Messages d'anniversaire <div class="btns"><span class="x">✕</span></div></div>
+        <div class="body">
+          <p class="count"><span id="msg-count">0</span> messages pour Clara &amp; Denez</p>
+          <div class="comments-box">
+            <div class="empty" id="empty">Aucun message pour l'instant… sois le premier ! 🎈</div>
+            <table class="comments" id="comments"></table>
+          </div>
+          <form class="wish-form" id="wish-form">
+            <input id="wish-name" placeholder="Ton prénom" required>
+            <textarea id="wish-text" placeholder="Écris ton message d'anniversaire…" required></textarea>
+            <button class="xp-btn">Envoyer mon message 🎁</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ================= BARRE DES TÂCHES ================= -->
+<div class="taskbar">
+  <a class="start" href="#">démarrer</a>
+  <div class="tasks">
+    <a href="#"><span class="app-ico" style="background:#5865f2">D</span>Discord</a>
+    <a href="#"><span class="app-ico" style="background:#1f1f1f;color:#e5a00d">❯</span>Plex</a>
+    <a href="#"><span class="app-ico" style="background:linear-gradient(135deg,#aa5cc3,#00a4dc)">▲</span>Jellyfin</a>
+    <a href="#"><span class="app-ico" style="background:linear-gradient(45deg,#f9a33a,#e1306c 50%,#833ab4)">◎</span>Instagram</a>
+  </div>
+  <div class="player" id="player" title="Lecture / pause">
+    <span class="play" id="play-icon">▶</span>
+    <span class="eq"><i></i><i></i><i></i></span>
+    <span class="title">Daft Punk – One More Time</span>
+  </div>
+  <div class="clock" id="clock"></div>
+</div>
+<audio id="music" src="public/One%20More%20Time.mp3" loop preload="auto"></audio>
+
+<script>
+  // Compte à rebours jusqu'à la fête
+  const partyDate = new Date("2026-12-11T19:00:00");
+  function tick() {
+    const el = document.getElementById("countdown");
+    const d = partyDate - new Date();
+    if (d <= 0) { el.textContent = "C'est maintenant ! 🎉"; }
+    else {
+      const j = Math.floor(d / 864e5), h = Math.floor(d / 36e5) % 24,
+            m = Math.floor(d / 6e4) % 60, s = Math.floor(d / 1e3) % 60;
+      el.textContent = `${j}j ${h}h ${m}min ${s}s`;
+    }
+    document.getElementById("clock").textContent =
+      new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" });
+  }
+  tick(); setInterval(tick, 1000);
+
+  // Confettis
+  const emojis = ["🎉", "🎊", "🎈", "✨", "🎂", "💖", "🎁"];
+  for (let i = 0; i < 25; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.textContent = emojis[i % emojis.length];
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.animationDuration = 6 + Math.random() * 8 + "s";
+    c.style.animationDelay = -Math.random() * 14 + "s";
+    document.body.appendChild(c);
+  }
+
+  // Ajouter un message (seulement dans ce navigateur)
+  document.getElementById("wish-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const name = document.getElementById("wish-name").value.trim();
+    const text = document.getElementById("wish-text").value.trim();
+    if (!name || !text) return;
+    const row = document.createElement("tr");
+    const who = document.createElement("td"); who.className = "who";
+    who.textContent = name;
+    const av = document.createElement("div"); av.className = "avatar"; av.textContent = "🎈";
+    who.appendChild(av);
+    const msg = document.createElement("td");
+    const date = document.createElement("div"); date.className = "date";
+    date.textContent = new Date().toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
+    msg.append(date, document.createTextNode(text));
+    row.append(who, msg);
+    document.getElementById("comments").appendChild(row);
+    document.getElementById("empty").style.display = "none";
+    const cnt = document.getElementById("msg-count");
+    cnt.textContent = +cnt.textContent + 1;
+    e.target.reset();
+  });
+
+  // Plein de voitures de police en feu qui traversent l'écran
+  for (let i = 0; i < 14; i++) {
+    const car = document.createElement("img");
+    car.src = "public/cops_car.gif";
+    car.alt = "";
+    car.className = "cop-float" + (i % 3 === 1 ? " rev" : "");
+    car.style.width = 60 + Math.random() * 90 + "px";
+    car.style.top = 5 + Math.random() * 80 + "vh";
+    const dur = 6 + Math.random() * 12;
+    car.style.animationDuration = dur + "s";
+    car.style.animationDelay = -Math.random() * dur + "s";
+    document.body.appendChild(car);
+  }
+
+  // Musique de fond : les navigateurs bloquent le son automatique,
+  // donc on essaie au chargement puis au premier clic / toucher sur la page.
+  const music = document.getElementById("music");
+  const player = document.getElementById("player");
+  const icon = document.getElementById("play-icon");
+  music.volume = 0.5;
+  let userPaused = false;
+  function refresh() {
+    const on = !music.paused;
+    player.classList.toggle("on", on);
+    icon.textContent = on ? "❚❚" : "▶";
+  }
+  music.addEventListener("play", refresh);
+  music.addEventListener("pause", refresh);
+  function tryPlay() {
+    setTimeout(() => {
+      const v = document.getElementById("souvenir-video");
+      if (!userPaused && v.paused) music.play().catch(() => {});
+    }, 50);
+  }
+  tryPlay();
+  ["click", "keydown", "touchstart"].forEach(ev =>
+    document.addEventListener(ev, tryPlay, { once: true }));
+  player.addEventListener("click", e => {
+    e.stopPropagation();
+    if (music.paused) { userPaused = false; music.play(); }
+    else { userPaused = true; music.pause(); }
+  });
+
+  // Pause la musique pendant la vidéo souvenir, puis la relance
+  const video = document.getElementById("souvenir-video");
+  let resumeAfter = false;
+  video.addEventListener("play", () => { resumeAfter = !music.paused; music.pause(); });
+  const resume = () => { if (resumeAfter) { music.play(); resumeAfter = false; } };
+  video.addEventListener("pause", resume);
+  video.addEventListener("ended", resume);
+</script>
+</body>
+</html>
